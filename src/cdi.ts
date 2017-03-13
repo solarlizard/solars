@@ -29,7 +29,6 @@ export function Service(target: any, key: string, propertyDescriptor: PropertyDe
 }
 
 export function Component(constructor: Function) {
-
     console.log("@" + Component.name + " : " + constructor.name);
     
     checkAlreadyRegistered(constructor);
