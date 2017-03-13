@@ -14,7 +14,8 @@ var typescriptCompilerOptions = {
     suppressImplicitAnyIndexErrors: true,
     emitDecoratorMetadata: true,
     target: "ES6",
-    moduleResolution : "Node"
+    moduleResolution : "Node",
+    declaration : true
 };
 
 gulp.task('clean', function () {
