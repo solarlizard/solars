@@ -1,12 +1,12 @@
-# solarf
+# solars
 > Typescript CDI-based framework with ORM
 
-[![Build Status](https://travis-ci.org/solarlizard/solarf.svg?branch=master)](https://travis-ci.org/solarlizard/solarf)
-![Dependencies](https://david-dm.org/solarlizard/solarf.svg)
+[![Build Status](https://travis-ci.org/solarlizard/solars.svg?branch=master)](https://travis-ci.org/solarlizard/solars)
+![Dependencies](https://david-dm.org/solarlizard/solars.svg)
 
 ## Installation
 ```bash
-$ npm install solarf
+$ npm install solars
 ```
 ## Usage
 
@@ -15,8 +15,8 @@ $ npm install solarf
 
 #### Component injection
 ```typescript
-import { Component } from "solarf/cdi"
-import { Inject    } from "solarf/cdi"
+import { Component } from "solars/cdi"
+import { Inject    } from "solars/cdi"
 
 @Component
 class CommonComponent {
@@ -40,9 +40,9 @@ class MyComponent {
 
 #### Bean injection
 ```typescript
-import { Bean      } from "solarf/cdi"
-import { Component } from "solarf/cdi"
-import { Inject    } from "solarf/cdi"
+import { Bean      } from "solars/cdi"
+import { Component } from "solars/cdi"
+import { Inject    } from "solars/cdi"
 
 abstract class CommonBean {
 
@@ -70,9 +70,9 @@ class MyComponent {
 ```
 #### Service injection
 ```typescript
-import { Service      } from "solarf/cdi"
-import { Component } from "solarf/cdi"
-import { Inject    } from "solarf/cdi"
+import { Service      } from "solars/cdi"
+import { Component } from "solars/cdi"
+import { Inject    } from "solars/cdi"
 
 abstract class CommonService {
 
@@ -107,9 +107,9 @@ class MyComponent {
 > Connection pooling
 
 ```typescript
-import { Bean             } from "solarf/cdi"
-import { Datasource       } from "solarf/datasource"
-import { PooledDatasource } from "solarf/datasource"
+import { Bean             } from "solars/cdi"
+import { Datasource       } from "solars/datasource"
+import { PooledDatasource } from "solars/datasource"
 
 @Bean (Datasource)
 class MyDatasource extends PooledDatasource {
