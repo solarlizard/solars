@@ -5,7 +5,7 @@ engines:
     config:
       languages:
       - typescript
-  eslint:
+  tslint:
     enabled: true
   fixme:
     enabled: true
