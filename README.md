@@ -123,3 +123,26 @@ class MyDatasource extends PooledDatasource {
     }
 }
 ```
+
+### Transaction
+> Automatic transaction handling during method invocation
+
+You need to register Bean implementing Datasource
+
+```typescript
+import { Inject       } from "solars/cdi"
+import { Transactional} from "solars/transaction"
+import { Transaction  } from "solars/transaction"
+
+class SomeClass {
+    
+    @Inject
+    private transaction : Transaction;
+    
+    @Transactional
+    public doSomeWorkInTransaction () {
+    }
+}
+
+```
+
