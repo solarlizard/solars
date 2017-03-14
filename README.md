@@ -6,7 +6,7 @@
 
 ## Installation
 ```bash
-$ npm install solars
+$ npm install https://github.com/solarlizard/solars/releases/download/[version]/archive.tar.gz
 ```
 ## Usage
 
