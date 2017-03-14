@@ -47,7 +47,7 @@ export function Inject(target: any, key: string) {
 
     let log = ` : ${entityClassName}.${key} = ${component.name}`;
 
-    let injectee = lookup(component.prototype);
+    let injectee = doLookup(component.prototype);
 
     if (injectee != null) {
         console.log(`@${Inject.name} [injected]${log}`);
@@ -70,11 +70,25 @@ export function Inject(target: any, key: string) {
 }
 
 export function lookup<SERVICE> (service : SERVICE) : SERVICE {
+    let result = doLookup(service);
+    
+    if (result == null) {
+        console.log(`${service} is not registerd`);
+        process.exit(1);
+    }
+    else {
+        return result;
+    }
+}
+
+export function doLookup<SERVICE> (service : SERVICE) : SERVICE {
     return <SERVICE> componentPrototypeMap[componentPrototypeMapIndex.indexOf(service)];
 }
 
 export function register (component : Object) {
     console.log("@Register : " + component.constructor.name);
+    
+    checkAlreadyRegistered(component.constructor);
     
     componentPrototypeMap[componentPrototypeMapIndex.push(component.constructor.prototype) - 1] = component;
 
@@ -123,7 +137,7 @@ function injectWaiters(name: string) {
     }
 }
 
-function checkAlreadyRegistered (bean : any) {
+function checkAlreadyRegistered (bean : Function) {
     if (componentPrototypeMapIndex.indexOf(bean.prototype) > 0) {
         console.error(bean.name + " is already registerd");
         process.exit(1);
