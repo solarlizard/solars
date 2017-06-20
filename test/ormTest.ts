@@ -145,6 +145,11 @@ class Tester {
             assert.equal(childEntity.recordId, 1);
             assert.equal(childEntity.name, 'child');
         }
+        {
+            let parentEntity = await this.entityManager.get(ParentEntity.prototype, 1);
+            
+            console.log(await this.entityManager.select("SELECT * FROM CHILD WHERE RECORD_ID_PARENT = $1", ChildEntity.prototype, [parentEntity]));
+        }
     }
 }
 
