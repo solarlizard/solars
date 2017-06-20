@@ -11,6 +11,7 @@ import {Datasource} from "./../src/datasource";
 import {Connection} from "./../src/datasource";
 import {Entity} from "./../src/orm";
 import {Field} from "./../src/orm";
+import {Id} from "./../src/orm";
 
 import {Database} from "sqlite3";
 
@@ -94,9 +95,16 @@ class DatasourceBean extends PooledDatasource {
     }
 }
 
+let sequence = 0;
+
+async function sequenceGenerator () : Promise<number> {
+    return sequence++;
+}
+
 @Entity ("PARENT")
 export class ParentEntity {
     
+    @Id(sequenceGenerator)
     @Field ("RECORD_ID")
     public recordId : number;
     
@@ -107,6 +115,7 @@ export class ParentEntity {
 @Entity ("CHILD")
 export class ChildEntity {
     
+    @Id(sequenceGenerator)
     @Field ("RECORD_ID")
     public recordId : number;
     
@@ -123,7 +132,7 @@ class Tester {
     private entityManager : EntityManager;
     
     @Transactional
-    public async test () {
+    public async testSelect () {
         {
             let childEntity = await this.entityManager.get(ChildEntity.prototype, 1);
             assert.equal(childEntity.recordId, 1);
@@ -147,9 +156,28 @@ class Tester {
         }
         {
             let parentEntity = await this.entityManager.get(ParentEntity.prototype, 1);
-            
-            console.log(await this.entityManager.select("SELECT * FROM CHILD WHERE RECORD_ID_PARENT = $1", ChildEntity.prototype, [parentEntity]));
+            assert.equal((await this.entityManager.select("SELECT * FROM CHILD WHERE RECORD_ID_PARENT = $1", ChildEntity.prototype, [parentEntity])).length, 1);
         }
+    }
+    
+    @Transactional
+    public async testUpdate () {
+        let childEntity = await this.entityManager.get(ChildEntity.prototype, 1);
+        
+        childEntity.name = 'newName';
+        
+        assert.equal((await this.entityManager.get(ChildEntity.prototype, 1)).name,'newName');
+    }
+    
+    @Transactional
+    public async testInsert () {
+        let childEntity = new ChildEntity ();
+        childEntity.name = 'newName';
+        childEntity.parent = await this.entityManager.get(ParentEntity.prototype,1);
+        
+        let result = await this.entityManager.merge(childEntity);
+        
+        assert.equal((await this.entityManager.get(ChildEntity.prototype, result.recordId)).name,'newName');
     }
 }
 
@@ -159,7 +187,31 @@ describe ('orm', ()=> {
     it ('get', (done)=> {
         thread.runThread(async ()=> {
             try {
-                await tester.test();
+                await tester.testSelect();
+                done ();
+            }
+            catch (err) {
+                done (new Error (err));
+                console.log(err);
+            }
+        })
+    });
+    it ('update', (done)=> {
+        thread.runThread(async ()=> {
+            try {
+                await tester.testUpdate();
+                done ();
+            }
+            catch (err) {
+                done (new Error (err));
+                console.log(err);
+            }
+        })
+    });
+    it ('insert', (done)=> {
+        thread.runThread(async ()=> {
+            try {
+                await tester.testInsert();
                 done ();
             }
             catch (err) {

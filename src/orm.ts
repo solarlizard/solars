@@ -3,6 +3,10 @@ import { Inject } from "./cdi";
 
 import { Transaction } from "./transaction";
 
+export interface Generator {
+    (table : string) : Promise<number>;
+};
+
 export function Entity(table : string) {
     return (constructor: Function) => {
         console.log("@" + Entity.name + " : " + constructor.name + " -> " + table);
@@ -22,6 +26,7 @@ export function Entity(table : string) {
         
         for (let fieldDefinition of entityClassFieldListMap[constructor.name]) {
             result.fieldMap[fieldDefinition.name] = fieldDefinition;
+            fieldDefinition.generator = entityClassFieldIdListMap[constructor.name + "." + fieldDefinition.name];
         }
         
         return result;
@@ -68,6 +73,13 @@ export function Field (column : string) {
     }
 }
 
+export function Id (generator : Generator) {
+    return (target: any, field: string)=> {
+        console.log("@" + Id.name + " : " + target.constructor.name + "." + field + " -> " + generator["name"]);
+        entityClassFieldIdListMap[target.constructor.name + "." + field] = generator;
+    }
+}
+
 export abstract class EntityManager {
     abstract selectWhere<ENTITY>(entity: ENTITY, nameValue : any []) : Promise<ENTITY []>
     
@@ -90,6 +102,7 @@ export class RecordNotFoundException {
 }
 
 const entityClassFieldListMap : {[entityClassName: string]: FieldDefinition[]; } = {};
+const entityClassFieldIdListMap : {[entityClassName: string]: Generator; } = {};
 const entityDefinitionMap: {[entityName: string]: EntityDefinition; } = {};
 
 const entityPrototypeNameMapIndex : any [] = [];
@@ -123,8 +136,8 @@ class EntityManagerBean implements EntityManager {
             
             let value = nameValue [q+1];
             
-            if (value.recordId != null) {
-                args.push(value.recordId);
+            if (value[RECORD_ID_FIELD] != null) {
+                args.push(value[RECORD_ID_FIELD]);
             }
             else {
                 args.push(value);
@@ -143,8 +156,8 @@ class EntityManagerBean implements EntityManager {
         let nativeArgs = args;
         
         for (let argIndex in nativeArgs) {
-            if (nativeArgs[argIndex].recordId) {
-                nativeArgs[argIndex] = nativeArgs[argIndex].recordId; 
+            if (nativeArgs[argIndex][RECORD_ID_FIELD]) {
+                nativeArgs[argIndex] = nativeArgs[argIndex][RECORD_ID_FIELD]; 
             }
         }
         
@@ -199,12 +212,16 @@ class EntityManagerBean implements EntityManager {
     
     public async remove (entity : any){
         await this.flush();
-        await this.transaction.update(`DELETE FROM ${entityDefinitionMap[entity.constructor.name].table} WHERE RECORD_ID = $1`, entity[RECORD_ID_FIELD]);
+        await this.transaction.update(`DELETE FROM ${entityDefinitionMap[entity.constructor.name].table} WHERE ${RECORD_ID_COLUMN} = $1`, entity[RECORD_ID_FIELD]);
     }
     
     public async merge<ENTITY> (entity : ENTITY) : Promise<ENTITY> {
-        if ((<any>entity).recordId == null) {
-            (<any>entity).recordId = (<any>(await this.transaction.select(`SELECT NEXTVAL ('${entityDefinitionMap[entity.constructor.name].table}_SEQ') AS seq`, []))[0]).seq;
+        let entityDefinition = entityDefinitionMap[entity.constructor.name];
+        
+        if ((<any>entity)[RECORD_ID_FIELD] == null) {
+            //(<any>entity).recordId = (<any>(await this.transaction.select(`SELECT NEXTVAL ('${entityDefinitionMap[entity.constructor.name].table}_SEQ') AS seq`, []))[0]).seq;
+            
+            (<any> entity)[RECORD_ID_FIELD] = await entityDefinition.fieldMap[RECORD_ID_FIELD].generator(entityDefinition.table);
             
             return this.getTransactionStore().registerModification(this.manageEntity(entity), MODIFY.INSERT);
         }
@@ -478,6 +495,7 @@ class TransactionStore {
 }
 
 class FieldDefinition {
+    public generator : Generator;
     public column : string;
     public name : string;
     public join : Function;
