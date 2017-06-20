@@ -2,6 +2,10 @@ import pg = require("pg");
 
 import {Connection} from "./datasource";
 
+export async function nextVal (connection : Connection, sequenceName : string) : Promise<number> {
+    return (<any>(await connection.select(`SELECT NEXTVAL ('${sequenceName}') AS seq`,[]))[0]).seq;
+}
+
 export function connect(config: {
     login: string,
     password: string,

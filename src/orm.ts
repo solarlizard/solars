@@ -219,8 +219,6 @@ class EntityManagerBean implements EntityManager {
         let entityDefinition = entityDefinitionMap[entity.constructor.name];
         
         if ((<any>entity)[RECORD_ID_FIELD] == null) {
-            //(<any>entity).recordId = (<any>(await this.transaction.select(`SELECT NEXTVAL ('${entityDefinitionMap[entity.constructor.name].table}_SEQ') AS seq`, []))[0]).seq;
-            
             (<any> entity)[RECORD_ID_FIELD] = await entityDefinition.fieldMap[RECORD_ID_FIELD].generator(entityDefinition.table);
             
             return this.getTransactionStore().registerModification(this.manageEntity(entity), MODIFY.INSERT);
