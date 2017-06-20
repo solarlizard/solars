@@ -2,7 +2,6 @@ import {assert} from "chai";
 
 import thread = require ("./../src/thread");
 
-import {Transaction} from "./../src/transaction";
 import {Transactional} from "./../src/transaction";
 import {Inject} from "./../src/cdi";
 import {EntityManager} from "./../src/orm";
@@ -12,8 +11,6 @@ import {Datasource} from "./../src/datasource";
 import {Connection} from "./../src/datasource";
 import {Entity} from "./../src/orm";
 import {Field} from "./../src/orm";
-
-import {suite, test} from "mocha-typescript";
 
 import {Database} from "sqlite3";
 
@@ -167,55 +164,3 @@ describe ('orm', ()=> {
         })
     });
 })
-
-
-/*
-@suite class ormTest {
-    
-    @Inject
-    private entityManager : EntityManager;
-    
-    @test
-    async testGet() {
-        thread.runThread(async ()=> {
-            await this._testGet();
-        });
-    }
-    
-    @test
-    async testSelectWhere() {
-        thread.runThread(async ()=> {
-            await this._testSelectWhere();
-        });
-    }
-    
-    @Transactional
-    async _testGet () {
-        try {
-            let childEntity = await this.entityManager.get(ChildEntity.prototype, 1);
-            assert.equal(childEntity.recordId, 1);
-            assert.equal(childEntity.name, 'child');
-
-            //let parentEntity = await childEntity.parent;
-            //assert.equal(parentEntity.recordId, 1);
-            //assert.equal(parentEntity.name, 'parent');
-
-            //await childEntity.parent;
-        }
-        catch (err) {
-            console.log(err);
-        }
-    }
-    
-    @Transactional
-    async _testSelectWhere () {
-        
-        //let parentEntity = await this.entityManager.get(ParentEntity.prototype, 1);
-        
-        //let childEntity = (await this.entityManager.selectWhere(ChildEntity.prototype, ["name",'child','parent', parentEntity])) [0];
-        
-        //assert.equal(childEntity.recordId, 1);
-        //assert.equal(childEntity.name, 'child');
-    }
-}
-*/
