@@ -138,10 +138,15 @@ class EntityManagerBean implements EntityManager {
     public async select<ENTITY>(query : string, entity: ENTITY, args : any[]) : Promise<ENTITY []> {
         
         await this.flush();
-        
 
         let nativeQuery = query;
         let nativeArgs = args;
+        
+        for (let argIndex in nativeArgs) {
+            if (nativeArgs[argIndex].recordId) {
+                nativeArgs[argIndex] = nativeArgs[argIndex].recordId; 
+            }
+        }
         
         return await this.selectNative(nativeQuery, entity, nativeArgs);
     }
