@@ -35,11 +35,9 @@ export function connect(config: {
                     else {
                         resolve({
                             update: async (sql: string, args: Object[]) => {
-                                console.log(sql + " " + args);
                                 return (await client.query(sql, args)).rowCount;
                             },
                             select: async (sql: string, args: Object[]) => {
-                                console.log(sql + " " + args);
                                 return (await client.query(sql, args)).rows;
                             },
                             commit: async () => {

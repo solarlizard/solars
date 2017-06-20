@@ -40,19 +40,6 @@ gulp.task('build',['build-src','build-test'], function () {
         .pipe(gulp.dest('dist'));
 });
 
-gulp.task("typedoc", function() {
-    return gulp
-        .src(["src/**/*.ts"])
-        .pipe(gulpTypedoc({
-            module: "None",
-            target: "ES6",
-            out: "dist/docs/",
-            name: "solarf",
-            experimentalDecorators : true
-        }))
-    ;
-});
-
 gulp.task('release',['build'], function(){
   return gulp.src(['dist/archive.tar.gz'])
     .pipe(gulpRelease({

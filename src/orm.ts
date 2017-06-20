@@ -387,7 +387,6 @@ class EntityManagerBean implements EntityManager {
                         entity["_" + field.name] = null;
                     }
                     else {
-                        console.log(newValue);
                         entity["_" + field.name + "_join"] = newValue;
                         entity["_" + field.name] = newValue.recordId;
                     }
