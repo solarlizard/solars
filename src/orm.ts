@@ -3,8 +3,8 @@ import { Inject } from "./cdi";
 
 import { Transaction } from "./transaction";
 
-export interface Generator {
-    (table : string) : Promise<number>;
+export abstract class IdGenerator {
+    abstract generate (table : string) : Promise<number>;
 };
 
 export function Entity(table : string) {
@@ -26,7 +26,6 @@ export function Entity(table : string) {
         
         for (let fieldDefinition of entityClassFieldListMap[constructor.name]) {
             result.fieldMap[fieldDefinition.name] = fieldDefinition;
-            fieldDefinition.generator = entityClassFieldIdListMap[constructor.name + "." + fieldDefinition.name];
         }
         
         return result;
@@ -73,12 +72,6 @@ export function Field (column : string) {
     }
 }
 
-export function Id (generator : Generator) {
-    return (target: any, field: string)=> {
-        console.log("@" + Id.name + " : " + target.constructor.name + "." + field + " -> " + generator["name"]);
-        entityClassFieldIdListMap[target.constructor.name + "." + field] = generator;
-    }
-}
 
 export abstract class EntityManager {
     abstract selectWhere<ENTITY>(entity: ENTITY, nameValue : any []) : Promise<ENTITY []>
@@ -102,7 +95,6 @@ export class RecordNotFoundException {
 }
 
 const entityClassFieldListMap : {[entityClassName: string]: FieldDefinition[]; } = {};
-const entityClassFieldIdListMap : {[entityClassName: string]: Generator; } = {};
 const entityDefinitionMap: {[entityName: string]: EntityDefinition; } = {};
 
 const entityPrototypeNameMapIndex : any [] = [];
@@ -118,6 +110,9 @@ class EntityManagerBean implements EntityManager {
     
     @Inject
     private transaction : Transaction;
+    
+    @Inject
+    private idGenerator : IdGenerator;
     
     public async selectWhere<ENTITY>(entity: ENTITY, nameValue : any[]) : Promise<ENTITY []> {
         let entityDefinition = entityDefinitionMap[entityPrototypeNameMap[entityPrototypeNameMapIndex.indexOf(entity)]];
@@ -172,7 +167,7 @@ class EntityManagerBean implements EntityManager {
 
         let result : ENTITY [] = [];
 
-        for (let record of await this.transaction.select(query, args)) {
+        for (let record of await (await this.transaction.getConnection()).select(query, args)) {
             let entity = new (<any>entityDefinition.cons);
             
             for (let column in record) {
@@ -212,14 +207,14 @@ class EntityManagerBean implements EntityManager {
     
     public async remove (entity : any){
         await this.flush();
-        await this.transaction.update(`DELETE FROM ${entityDefinitionMap[entity.constructor.name].table} WHERE ${RECORD_ID_COLUMN} = $1`, entity[RECORD_ID_FIELD]);
+        await (await this.transaction.getConnection()).update(`DELETE FROM ${entityDefinitionMap[entity.constructor.name].table} WHERE ${RECORD_ID_COLUMN} = $1`, entity[RECORD_ID_FIELD]);
     }
     
     public async merge<ENTITY> (entity : ENTITY) : Promise<ENTITY> {
         let entityDefinition = entityDefinitionMap[entity.constructor.name];
         
         if ((<any>entity)[RECORD_ID_FIELD] == null) {
-            (<any> entity)[RECORD_ID_FIELD] = await entityDefinition.fieldMap[RECORD_ID_FIELD].generator(entityDefinition.table);
+            (<any> entity)[RECORD_ID_FIELD] = await this.idGenerator.generate(entityDefinition.table);
             
             return this.getTransactionStore().registerModification(this.manageEntity(entity), MODIFY.INSERT);
         }
@@ -267,7 +262,7 @@ class EntityManagerBean implements EntityManager {
 
         query += ` WHERE RECORD_ID = $${args.length}`;
 
-        await this.transaction.update(query, args);
+        await (await this.transaction.getConnection()).update(query, args);
     }
     
     private async doInsert (entityDefinition: EntityDefinition, entityModification: EntityModification) {
@@ -306,7 +301,7 @@ class EntityManagerBean implements EntityManager {
 
         query += ")";
 
-        await this.transaction.update(query, args);
+        await (await this.transaction.getConnection()).update(query, args);
     }
     
     private manageEntity<ENTITY>(entity: ENTITY) : ENTITY {
@@ -493,7 +488,6 @@ class TransactionStore {
 }
 
 class FieldDefinition {
-    public generator : Generator;
     public column : string;
     public name : string;
     public join : Function;

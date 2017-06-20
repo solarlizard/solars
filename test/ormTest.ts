@@ -11,9 +11,19 @@ import {Datasource} from "./../src/datasource";
 import {Connection} from "./../src/datasource";
 import {Entity} from "./../src/orm";
 import {Field} from "./../src/orm";
-import {Id} from "./../src/orm";
+import {IdGenerator} from "./../src/orm";
 
 import {Database} from "sqlite3";
+
+@Bean (IdGenerator)
+class SequenceGenerator extends IdGenerator {
+    
+    private sequence = 0;
+    
+    public async generate () {
+        return this.sequence++;
+    }
+}
 
 @Bean (Datasource)
 class DatasourceBean extends PooledDatasource {
@@ -95,16 +105,10 @@ class DatasourceBean extends PooledDatasource {
     }
 }
 
-let sequence = 0;
-
-async function sequenceGenerator () : Promise<number> {
-    return sequence++;
-}
 
 @Entity ("PARENT")
 export class ParentEntity {
     
-    @Id(sequenceGenerator)
     @Field ("RECORD_ID")
     public recordId : number;
     
@@ -115,7 +119,6 @@ export class ParentEntity {
 @Entity ("CHILD")
 export class ChildEntity {
     
-    @Id(sequenceGenerator)
     @Field ("RECORD_ID")
     public recordId : number;
     

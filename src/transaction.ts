@@ -42,9 +42,10 @@ export interface TransactionListener {
 
 export abstract class Transaction {
     abstract getId () : string;
-    abstract update(sql: string, params: Object[]): Promise<number>;
-    abstract select(sql: string, params: Object[]): Promise<Object[]>;
+    //abstract update(sql: string, params: Object[]): Promise<number>;
+    //abstract select(sql: string, params: Object[]): Promise<Object[]>;
     abstract addListener (listener: TransactionListener) : void;
+    abstract getConnection () : Promise<Connection>;
 }
 
 @Bean(Transaction)
@@ -53,13 +54,17 @@ class TransactionBean implements Transaction {
     getId () : string {
         return this.getTransactionThread().id;
     }
-
+    /*
     async update(sql: string, params: Object[]) {
-        return (await this.getTransactionThread().getConnection()).update(sql, params);
+        return (await this.getConnection()).update(sql, params);
     }
 
     async select(sql: string, params: Object[]): Promise<Object[]> {
-        return (await this.getTransactionThread().getConnection()).select(sql, params);
+        return (await this.getConnection()).select(sql, params);
+    }
+    */
+    async getConnection () : Promise<Connection> {
+        return await this.getTransactionThread().getConnection();
     }
     
     addListener (listener: TransactionListener) {
