@@ -15,7 +15,6 @@
     "@types/hapi": "*",
     "@types/pg": "*",
     "@types/sqlite3": "*",
-    "@types/mocha": "*",
     "@types/node": "*",
     "chai": "*",
     "gulp": "*",
