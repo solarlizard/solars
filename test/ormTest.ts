@@ -1,4 +1,5 @@
 import {assert} from "chai";
+import { suite, test} from "mocha-typescript";
 
 import thread = require ("./../src/thread");
 
@@ -146,17 +147,20 @@ class Tester {
                 assert.equal(parentEntity.recordId, 1);
                 assert.equal(parentEntity.name, 'parent');
             }
+            
             {
                 let parentEntity = await childEntity.parent;
                 assert.equal(parentEntity.recordId, 1);
                 assert.equal(parentEntity.name, 'parent');
             }
         }
+        
         {
             let childEntity = await this.entityManager.getWhere(ChildEntity.prototype, ["name", "child", "parent", await this.entityManager.get(ParentEntity.prototype, 1)]);
             assert.equal(childEntity.recordId, 1);
             assert.equal(childEntity.name, 'child');
         }
+        
         {
             let parentEntity = await this.entityManager.get(ParentEntity.prototype, 1);
             assert.equal((await this.entityManager.select("SELECT * FROM CHILD WHERE RECORD_ID_PARENT = $1", ChildEntity.prototype, [parentEntity])).length, 1);
@@ -186,6 +190,24 @@ class Tester {
 
 let tester = new Tester ();
 
+@suite class ormTest {
+    @test async "orm"() {
+        return thread.runThread(async ()=> {
+            await tester.testSelect();
+        })
+    }
+    @test async "update"() {
+        return thread.runThread(async ()=> {
+            await tester.testUpdate();
+        })
+    }
+    @test async "insert"() {
+        return thread.runThread(async ()=> {
+            await tester.testInsert();
+        })
+    }
+}
+/*
 describe ('orm', ()=> {
     it ('get', (done)=> {
         thread.runThread(async ()=> {
@@ -224,3 +246,4 @@ describe ('orm', ()=> {
         })
     });
 })
+*/

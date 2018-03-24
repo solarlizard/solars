@@ -7,7 +7,7 @@ export function run () {
         test ();
     }
 }
-
+/*
 export function Test(target: any, methodName: string, descriptor: PropertyDescriptor) {
 
     console.log(`@${Test.name} : ${target.constructor.name}.${methodName}`);
@@ -30,3 +30,4 @@ export function Test(target: any, methodName: string, descriptor: PropertyDescri
         value : descriptor.value
     };
 }
+*/

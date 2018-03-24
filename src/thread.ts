@@ -3,7 +3,7 @@ import cls = require("continuation-local-storage");
 let ns = cls.createNamespace('com.solarlizard.application');
 
 export function isActive () {
-    return ns.context != null
+    return ns.active;
 }
 
 export function runThread<RESULT>(cb: () => RESULT) : RESULT {

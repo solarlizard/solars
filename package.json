@@ -10,29 +10,27 @@
       "url" : "https://github.com/solarlizard/solars/issues"
   },
   "devDependencies": {
-    "@types/chai": "^3.4.35",
-    "@types/continuation-local-storage": "^3.2.0",
-    "@types/hapi": "^16.0.0",
-    "@types/mocha": "^2.2.39",
-    "@types/pg": "^6.1.37",
-    "@types/reflect-metadata": "0.0.5",
-    "@types/sqlite3": "^2.2.32",
-    "@types/mocha": "^2.2.40",
-    "@types/jquery": "^2.0.41",
-    "chai": "^3.5.0",
-    "gulp": "^3.9.1",
-    "gulp-clean": "^0.3.2",
-    "gulp-copy": "^1.0.0",
-    "gulp-github-release": "^1.2.1",
-    "gulp-gzip": "^1.4.0",
-    "gulp-tar": "^1.9.0",
-    "gulp-typedoc": "^2.0.2",
-    "gulp-typescript": "^3.1.5",
-    "mocha": "^3.2.0",
-    "mocha-typescript": "^1.0.22",
-    "sqlite3": "^3.1.8",
-    "typedoc": "^0.5.7",
-    "typescript": "^2.2.1"
+    "@types/chai": "*",
+    "@types/continuation-local-storage": "*",
+    "@types/hapi": "*",
+    "@types/pg": "*",
+    "@types/sqlite3": "*",
+    "@types/mocha": "*",
+    "@types/node": "*",
+    "chai": "*",
+    "gulp": "*",
+    "gulp-clean": "*",
+    "gulp-copy": "*",
+    "gulp-github-release": "*",
+    "gulp-gzip": "*",
+    "gulp-tar": "*",
+    "gulp-typedoc": "*",
+    "gulp-typescript": "*",
+    "mocha": "*",
+    "mocha-typescript": "*",
+    "sqlite3": "*",
+    "typedoc": "*",
+    "typescript": "*"
   },
   "scripts": {
     "release": "gulp clean && gulp release",
@@ -40,9 +38,9 @@
     "rebuild": "gulp clean && gulp build && mocha dist/test"
   },
   "dependencies": {
-    "continuation-local-storage": "^3.2.0",
-    "fs": "0.0.1-security",
-    "pg": "^6.1.4",
-    "reflect-metadata": "^0.1.10"
+    "xml-parser": "*",
+    "continuation-local-storage": "*",
+    "pg": "*",
+    "reflect-metadata": "*"
   }
 }

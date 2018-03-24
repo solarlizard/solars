@@ -8,6 +8,7 @@
         "moduleResolution" : "Node"
     },
     "include": [
-        "*.ts"
+        "src/*.ts",
+        "test/*.ts"
     ]
 }
