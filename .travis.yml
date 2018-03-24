@@ -9,5 +9,5 @@ node_js:
     - "stable"
   
 script:
-    - npm run rebuild
+    - npm run release
     
