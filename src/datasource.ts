@@ -6,24 +6,24 @@ export abstract class Connection {
     abstract close(): Promise<void>;
 }
 
-export interface DatasourceConfig {
-    maxPoolQuantity: number,
-    createConnection(): Promise<Connection>
-}
-
 export abstract class Datasource {
     abstract getConnection(): Promise<Connection>;
 }
 
+export interface PooledDatasourceConfig {
+    maxPoolQuantity: number,
+    createConnection(): Promise<Connection>
+}
+
 export class PooledDatasource implements Datasource {
 
-    private config: DatasourceConfig;
+    private config: PooledDatasourceConfig;
     private freeConnectionList: Connection[] = [];
     private openedConnectionQuantity = 0;
 
     private waiterList: ((connection: Connection) => void)[] = [];
 
-    constructor(config: DatasourceConfig) {
+    constructor(config: PooledDatasourceConfig) {
         this.config = config;
     }
 

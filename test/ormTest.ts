@@ -4,7 +4,7 @@ import { suite, test} from "mocha-typescript";
 import thread = require ("./../src/thread");
 
 import {Transactional} from "./../src/transaction";
-import {Inject} from "./../src/cdi";
+import {Autowire} from "./../src/cdi";
 import {EntityManager} from "./../src/orm";
 import {Bean} from "./../src/cdi";
 import {PooledDatasource} from "./../src/datasource";
@@ -132,7 +132,7 @@ export class ChildEntity {
 
 class Tester {
     
-    @Inject
+    @Autowire
     private entityManager : EntityManager;
     
     @Transactional

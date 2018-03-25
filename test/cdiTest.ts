@@ -5,7 +5,7 @@ import cdi = require ("./../src/cdi");
 import { Service } from "./../src/cdi";
 import { Bean } from "./../src/cdi";
 import { Component } from "./../src/cdi";
-import { Inject } from "./../src/cdi";
+import { Autowire } from "./../src/cdi";
 
 @Component
 class TestComponent {
@@ -44,13 +44,13 @@ class TestServiceBean {
 
 class Tester {
     
-    @Inject
+    @Autowire
     private component: TestComponent;
     
-    @Inject
+    @Autowire
     private bean: TestBean;
     
-    @Inject
+    @Autowire
     private service: TestService;
     
     public testComponent () : string {

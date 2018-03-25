@@ -2,7 +2,7 @@ import cdi = require ("./cdi");
 import thread = require ("./thread");
 
 import { Bean } from "./cdi";
-import { Inject } from "./cdi";
+import { Autowire } from "./cdi";
 
 export class AccessDeniedException {}
 export class NotAuthorisedException {}

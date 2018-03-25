@@ -1,5 +1,5 @@
 import { Bean } from "./cdi";
-import { Inject } from "./cdi";
+import { Autowire } from "./cdi";
 
 import { Transaction } from "./transaction";
 
@@ -108,10 +108,10 @@ const RECORD_ID_COLUMN = "RECORD_ID";
 @Bean(EntityManager)
 class EntityManagerBean implements EntityManager {
     
-    @Inject
+    @Autowire
     private transaction : Transaction;
     
-    @Inject
+    @Autowire
     private idGenerator : IdGenerator;
     
     public async selectWhere<ENTITY>(entity: ENTITY, nameValue : any[]) : Promise<ENTITY []> {

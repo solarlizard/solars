@@ -2,6 +2,10 @@ import 'reflect-metadata';
 
 let startCallback : () => void;
 
+let componentPrototypeMapIndex : any [] = [];
+let componentPrototypeMap: {[index: number]: Object;} = {};
+let componentWaitingMap: {[name: string]: ComponentWaiter[]} = {};
+
 export function Bean(beanInterface: Function) {
     return (target: Function) => {
         let componentClassName = target.name;
@@ -39,7 +43,7 @@ export function Component(constructor: Function) {
 
 }
 
-export function Inject(target: any, key: string) {
+export function Autowire(target: any, key: string) {
     
     let entityClassName = target.constructor.name;
 
@@ -50,11 +54,11 @@ export function Inject(target: any, key: string) {
     let injectee = doLookup(component.prototype);
 
     if (injectee != null) {
-        console.log(`@${Inject.name} [injected]${log}`);
+        console.log(`@${Autowire.name} [injected]${log}`);
         target[key] = lookup(component.prototype);
     }
     else {
-        console.log(`@${Inject.name} [waiting]${log}`);
+        console.log(`@${Autowire.name} [waiting]${log}`);
         let waiterList = componentWaitingMap[component.name];
 
         if (waiterList == null) {
@@ -63,7 +67,7 @@ export function Inject(target: any, key: string) {
         }
 
         waiterList.push(() => {
-            console.log(`@${Inject.name} [injected]${log}`);
+            console.log(`@${Autowire.name} [injected]${log}`);
             target[key] = lookup(component.prototype);
         });
     }
@@ -106,11 +110,6 @@ export function start (callback : ()=> void) {
 interface ComponentWaiter {
     (): void
 }
-
-let componentPrototypeMapIndex : any [] = [];
-let componentPrototypeMap: {[index: number]: Object;} = {};
-
-let componentWaitingMap: {[name: string]: ComponentWaiter[]} = {};
 
 function isReady(): boolean {
     for (let name in componentWaitingMap) {
