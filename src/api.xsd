@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<xs:schema version="1.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://rpc.api.sifox.com"
+           xmlns="http://api.solarlizard.com"
+           elementFormDefault="qualified"
+>
+
+    <xs:simpleType name="TYPE">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="STRING" />
+            <xs:enumeration value="BOOLEAN" />
+            <xs:enumeration value="NUMBER" />
+            <xs:enumeration value="DATE" />
+            <xs:enumeration value="DOUBLE" />
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:complexType name="Property">
+        <xs:sequence>
+            <xs:element name="property" type="Property" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" use="required" type="xs:string"/>
+        <xs:attribute name="type" use="optional" type="TYPE"/>
+        <xs:attribute name="model" use="optional" type="xs:string"/>
+        <xs:attribute name="array" use="optional" type="xs:boolean" default="false"/>
+    </xs:complexType>
+
+    <xs:element name="api">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="imprt" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:attribute name="prefix" type="xs:string" use="required"/>
+                        <xs:attribute name="tsFile" type="xs:string" use="required"/>
+                        <xs:attribute name="javaPackage" type="xs:string" use="required"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="enm" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                        <xs:attribute name="name" use="required" type="xs:string"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="model" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="property" minOccurs="0" maxOccurs="unbounded" type="Property"/>
+                        </xs:sequence>
+                        <xs:attribute name="name" type="xs:string" use="required"/>
+                        <xs:attribute name="extends" type="xs:string" use="optional"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="operation" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="ex" minOccurs="0" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:attribute name="model" use="required" type="xs:string"/>
+                                    <xs:attribute name="ignore" use="optional" type="xs:boolean" default="false"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="request" minOccurs="0" maxOccurs="1">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="property" minOccurs="0" maxOccurs="unbounded" type="Property"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="response" minOccurs="0" maxOccurs="1">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="property" minOccurs="0" maxOccurs="unbounded" type="Property"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="name" use="required" type="xs:string"/>
+                        <xs:attribute name="paramName" use="optional" type="xs:string"/>
+                        <xs:attribute name="paramType" use="optional" type="TYPE"/>
+                        <xs:attribute name="paramModel" use="optional" type="xs:string"/>
+                        <xs:attribute name="paramArray" use="optional" type="xs:boolean" default="false"/>
+                        <xs:attribute name="resultType" use="optional" type="TYPE"/>
+                        <xs:attribute name="resultModel" use="optional" type="xs:string"/>
+                        <xs:attribute name="resultArray" use="optional" type="xs:boolean" default="false"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="get" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="parameter" minOccurs="0" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:attribute name="name" use="required" type="xs:string"/>
+                                    <xs:attribute name="type" use="required" type="TYPE"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="name" use="required" type="xs:string"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="section" use="optional" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

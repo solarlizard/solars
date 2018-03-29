@@ -2,9 +2,9 @@
 
 import parse = require('xml-parser');
 
-import {Document, Node, Attributes} from "xml-parser";
+import {Node} from "xml-parser";
 
-import * as t from "xmlbuilder";
+import {create as createXml} from "xmlbuilder";
 import {XMLElementOrXMLNode} from "xmlbuilder";
 
 export class XmlTag {
@@ -35,7 +35,7 @@ export function write(node: XmlNode) : string {
         tagName = nsMap.get(node.tag.ns) + ":" + tagName;
     }
     
-    let builder = t.create(tagName, { encoding: 'utf-8' });
+    let builder = createXml(tagName, { encoding: 'utf-8' });
     
     nsMap.forEach((prefix : string, ns : string)=> {
         builder = builder.attribute("xmlns:" + prefix, ns);
