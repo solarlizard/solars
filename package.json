@@ -6,16 +6,18 @@
     "type": "git",
     "url": "https://github.com/solarlizard/solars"
   },
-  "bugs" : { 
-      "url" : "https://github.com/solarlizard/solars/issues"
+  "bugs": {
+    "url": "https://github.com/solarlizard/solars/issues"
   },
   "devDependencies": {
     "@types/chai": "*",
     "@types/continuation-local-storage": "*",
     "@types/hapi": "*",
+    "@types/node": "*",
     "@types/pg": "*",
     "@types/sqlite3": "*",
-    "@types/node": "*",
+    "@types/xml-parser": "^1.2.29",
+    "@types/xmlbuilder": "^0.0.32",
     "chai": "*",
     "gulp": "*",
     "gulp-clean": "*",
@@ -37,9 +39,11 @@
     "rebuild": "gulp clean && gulp build && mocha dist/test"
   },
   "dependencies": {
-    "xml-parser": "*",
     "continuation-local-storage": "*",
     "pg": "*",
-    "reflect-metadata": "*"
+    "reflect-metadata": "*",
+    "xml-parser": "*",
+    "xml-writer": "^1.7.0",
+    "xmlbuilder": "^9.0.7"
   }
 }

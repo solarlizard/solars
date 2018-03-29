@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns1:parent xmlns:ns1="http://namespace1" name="parent" xmlns:ns3="http://namespace3"  xmlns:ns4="http://namespace4">
+    <ns2:child name="child" xmlns:ns2="http://namespace2">
+        <ns3:subChild name="subChild"/>
+    </ns2:child>
+    <ns4:simpleChild>simpleChild</ns4:simpleChild>
+    <ns2:childList name="childList1" xmlns:ns2="http://namespace2"/>
+    <ns2:childList name="childList2" xmlns:ns2="http://namespace2"/>
+    <ns4:simpleChildList>simpleChildList1</ns4:simpleChildList>
+    <ns4:simpleChildList>simpleChildList2</ns4:simpleChildList>
+</ns1:parent>

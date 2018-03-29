@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ********************************************************************** -->
+<!-- Copyright (c) 2004-2005 Broadsoft, Inc.  All rights reserved.          -->
+<!-- ********************************************************************** -->
+<!--       O C I   X M L   S C H E M A  :  C O R E   P A R T                -->
+<!--                                                                        -->
+<!-- This file defines the XML Schema for the BroadSoft Application Server  -->
+<!-- Open Client Interface (OCI).                                           -->
+<!-- ********************************************************************** -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="C" targetNamespace="C">
+
+
+
+
+
+
+
+    <!-- ******************************************************************** -->
+    <!-- C O R E   M E S S A G E   T Y P E S                                  -->
+    <!-- ******************************************************************** -->
+    <!--
+    The following types define the core elements of the messaging protocol.
+    Each message contains a list of Request or Response commands.
+    -->
+
+    <xs:element name="BroadsoftDocument" type="OCIMessage">
+        <xs:annotation>
+            <xs:documentation>Every Message starts with a BroadsoftDocument tag.</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:complexType name="OCIMessage">
+        <xs:annotation>
+            <xs:appinfo>
+                <bwAppInfo xmlns="" bwtag="_358daf0296124bf7b70edf9cd28c1f82"/>
+            </xs:appinfo>
+            <xs:documentation>
+                A message contains a list of requests or responses. The server processes all the requests
+                and returns a message with a corresponding list of responses.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice>
+                <xs:element name="sessionId" type="xs:normalizedString">
+                    <xs:annotation>
+                        <xs:documentation>
+                            The session id identifies a logged-in user. The client is responsible to ensure the uniqueness of the session id.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="userId" type="xs:token">
+                    <xs:annotation>
+                        <xs:documentation>
+                            The user id identifies a preauthenticated user performing a session-less OCI request. The source of the request
+                            must be in the external authentication access control list.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="phoneNumber" type="xs:token">
+                    <xs:annotation>
+                        <xs:documentation>
+                            The phone number identifies a preauthenticated user performing a session-less OCI request. The source of the request
+                            must be in the external authentication access control list.
+                            The phone number must be in E.164 format.  Any DN associated with the user may be used. 
+                            BroadSoft recommends only using this element in the rare case when the userId is not known.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:choice>
+            <xs:element name="command" type="OCICommand" minOccurs="1" maxOccurs="15">
+                <xs:annotation>
+                    <xs:documentation>List of requests or responses.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="protocol" use="required">
+            <xs:simpleType>
+                <xs:annotation>
+                    <xs:appinfo>
+                        <bwAppInfo xmlns="" bwtag="_9c9bd142b1a84e6bbd6fe862068fe1df"/>
+                    </xs:appinfo>
+                </xs:annotation>
+                <xs:restriction base="xs:NMTOKEN">
+                    <xs:enumeration value="OCI"/>
+                    <xs:enumeration value="NSOCI"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="OCICommand" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <bwAppInfo xmlns="" bwtag="_a8b4acc57a114c72bd0f4d61085983f6"/>
+            </xs:appinfo>
+            <xs:documentation>
+                The OCICommand is an abstract type from which all requests and responses are derived.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+        </xs:sequence>
+        <xs:attribute name="echo" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    The client can send the echo attribute in any request and the server will return the echo attribute in the response.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="OCIRequest" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <bwAppInfo xmlns="" bwtag="_e1a1cc37f5f54d99aeed9cf346371b24"/>
+            </xs:appinfo>
+            <xs:documentation>
+                The OCIRequest is an abstract type from which all requests are derived.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="OCICommand">
+                <xs:sequence>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="OCIResponse" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <bwAppInfo xmlns="" bwtag="_9dcdb1c3f05b40d9b92a98679b116e92"/>
+            </xs:appinfo>
+            <xs:documentation>
+                The OCIResponse is an abstract type from which all responses are derived.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="OCICommand">
+                <xs:sequence>
+                </xs:sequence>
+                <xs:attribute name="debugInfo" type="xs:string" use="optional">
+                    <xs:annotation>
+                        <xs:documentation>
+                            Used during software development only. Will never be used in a production system.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="OCIDataResponse" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <bwAppInfo xmlns="" bwtag="_5a6e3b4aad41434198195df9740e854e"/>
+            </xs:appinfo>
+            <xs:documentation>
+                The OCIDataResponse is an abstract base type for all responses containing some sort of data other than
+                merely a success or failure indication.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="OCIResponse">
+                <xs:sequence>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SuccessResponse">
+        <xs:annotation>
+            <xs:appinfo>
+                <bwAppInfo xmlns="" bwtag="_89c6c5c195ff443f97d616b7cfcbe4ef"/>
+            </xs:appinfo>
+            <xs:documentation>
+                The SuccessResponse is concrete response sent whenever a transaction is successful and does not return any data.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="OCIResponse">
+                <xs:sequence>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ErrorResponse">
+        <xs:annotation>
+            <xs:appinfo>
+                <bwAppInfo xmlns="" bwtag="_6a6d07e0bfaa43fc83b2c05769785572"/>
+            </xs:appinfo>
+            <xs:documentation>
+                The ErrorResponse is concrete response sent whenever a transaction fails and does not return any data.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="OCIResponse">
+                <xs:sequence>
+                    <xs:element name="errorCode" type="xs:int" minOccurs="0"/>
+                    <xs:element name="summary" type="xs:string"/>
+                    <xs:element name="summaryEnglish" type="xs:string"/>
+                    <xs:element name="detail" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+                <xs:attribute name="type" use="required">
+                    <xs:simpleType>
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <bwAppInfo xmlns="" bwtag="_de434e457f0646ae84354ae46a6e0e32"/>
+                            </xs:appinfo>
+                        </xs:annotation>
+                        <xs:restriction base="xs:NMTOKEN">
+                            <xs:enumeration value="Error"/>
+                            <xs:enumeration value="Warning"/>
+                            <xs:enumeration value="Info"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- ******************************************************************** -->
+    <!-- M E S S A G E   P A R A M E T E R S                                  -->
+    <!-- ******************************************************************** -->
+    <!--
+    The non-primitive attributes are listed here in alphabetical order.
+    -->
+
+    <xs:complexType name="OCITable">
+        <xs:annotation>
+            <xs:appinfo>
+                <bwAppInfo xmlns="" bwtag="_3dd4d7947f14455497a0dd7410b5b0ee"/>
+            </xs:appinfo>
+            <xs:documentation>
+                The OCITable type is used in responses only, never in requests.
+                The table consists of rows and columns of strings. Each column has a column
+                heading. Clients should search the column headings to find a particular
+                column. Clients should not assume any particular column order as future
+                revisions of the protocol may move or add columns.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="colHeading" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="row" type="OCITableRow" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="OCITableRow">
+        <xs:annotation>
+            <xs:appinfo>
+                <bwAppInfo xmlns="" bwtag="_e8c7e45b213840caa00f6dfd9cafec7d"/>
+            </xs:appinfo>
+            <xs:documentation>
+                The OCITableRow type is used in responses only, never in requests. It occurs
+                inside the OCITable type. The OCITableRow consists columns of strings.
+                Clients should not assume any particular column order as future
+                revisions of the protocol may move or add columns. See the OCITable data type
+                for more information.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="col" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
